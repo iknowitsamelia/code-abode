@@ -1,0 +1,408 @@
+
+////////////////////////////////////////////////////////////////////////////// README //////////////////////////////////////////////////////////////////////////////////////////////
+//This file is designed for automating document creation in the state of Arkansas by collecting small sample information and producing all necessary documents using              // 
+//Google Apps Script. The sample form where this was recorded is listed here: https://docs.google.com/forms/d/e/1FAIpQLSdF3Nehe2JcMmnrNRNmOk2PAC_mYJSxD8RMnWxEAoamOnONvw/viewform //
+//Responses will be connected to a Google Sheet that will act as both a data processor and repository. A destination folder will need to be created, and the id will need to be   //
+//called in the Apps Script. Three templates will need to be created for these forms. I've listed these templates here:                                                           //
+//Petition for Name Change - https://docs.google.com/document/d/1U3oJ5CmIphj7cT8917OqA-6xIZcALdkbBYFvatH6Yu4/edit                                                                 //
+//Order for Name Change Form - https://docs.google.com/document/d/1dGEfMTgTaFeMaWN32oQ3nY2-j0vafkiXaABhCdwI0qg/edit                                                               //
+//Name Change Verification - https://docs.google.com/document/d/1-maMCTtJHc32aOytOBjx02Mkps7IGlQgt6vE02MsdhI/edit                                                                 //
+//A sample of the Sheet processor is listed here - https://docs.google.com/spreadsheets/d/1YnKjmdt9vCnz5AHc22gEaKajT5dDUNxhL25p2apAvVM/edit#gid=1574111289                        //
+//The code of the sheet is listed below. As new submissions come from the form, the form passes the information to the Sheet under sheet 'Responses' and begins the build process //
+//Apps Script is input into the Google Sheet! Adjust and call your variables as necessary!                                                                                        //
+//Be sure to add your trigger and your ids from each document                                                                                                                     //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function onOpen() {
+const ui = SpreadsheetApp.getUi();
+const menu = ui.createMenu("AutoFill Docs");
+menu.addItem('Create New Docs', 'createNewGoogleDocs');
+menu.addToUi();
+
+}
+
+function createNewGoogleDocs() {
+
+const orderDocTemplate = DriveApp.getFileById('YOURORDERDOCID');
+const petitionDocTemplate = DriveApp.getFileById('YOURPETITIONID');
+const verificationDocTemplate = DriveApp.getFileById('YOURVERIFICATIONID');
+const destinationFolder = DriveApp.getFolderById('YOURDESTINATIONFOLDER');
+const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Responses');
+
+const rows = sheet.getDataRange().getValues();
+
+Logger.log(rows);
+
+rows.forEach(function(row,index){
+if (index === 0) return;
+if (row[12]) return;
+
+const order = orderDocTemplate.makeCopy(row[2]+' Order for Name Change', destinationFolder);
+const orderdoc = DocumentApp.openById(order.getId())
+const orderbody = orderdoc.getBody();
+
+const petition = petitionDocTemplate.makeCopy(row[2]+' Petition for Name Change', destinationFolder);
+const petitiondoc = DocumentApp.openById(petition.getId())
+const petitionbody = petitiondoc.getBody();
+
+const verification = verificationDocTemplate.makeCopy(row[2]+' Verification for Name Change', destinationFolder);
+const verificationdoc = DocumentApp.openById(verification.getId())
+const verificationbody = verificationdoc.getBody();
+
+if (row[3]==="He/Him/His"){
+  const subject = "he"; 
+  const possessive = "his"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };
+
+if (row[3]==="She/Her/Hers"){
+  const subject = "she"; 
+  const possessive = "her"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };  
+
+  if (row[3]==="They/Their/Theirs"){
+  const subject = "they"; 
+  const possessive = "their"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+  orderbody.replaceText('has','have');
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+  petitionbody.replaceText('has','have')
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  verificationbody.replaceText('has','have')
+  
+  };
+
+  if (row[3]==="Per/Pers/Pers"){
+  const subject = "per"; 
+  const possessive = "pers"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };
+
+  if (row[3]==="Ve/Ver/Vis"){
+  const subject = "ve"; 
+  const possessive = "ver"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };
+
+  if (row[3]==="Ve/Ver/Vis"){
+  const subject = "ve"; 
+  const possessive = "ver"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };
+
+  if (row[3]==="Xe/Xem/Xyr"){
+  const subject = "xe"; 
+  const possessive = "xem"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };
+
+  if (row[3]==="Ze/Hir/Hir"){
+  const subject = "ze"; 
+  const possessive = "hir"
+  
+  orderbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  orderbody.replaceText('{{legalname}}', row[1].toString())
+  orderbody.replaceText('{{preferredname}}', row[2].toString())
+  orderbody.replaceText('{{subject}}', subject)
+  orderbody.replaceText('{{possessive}}', possessive)
+  orderbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  orderbody.replaceText('{{streetaddress}}',row[5])
+  orderbody.replaceText('{{city}}',row[6])
+  orderbody.replaceText('{{st}}',row[7])
+  orderbody.replaceText('{{zip}}',row[8])
+  orderbody.replaceText('{{phone}}',row[9])
+
+  petitionbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  petitionbody.replaceText('{{legalname}}', row[1].toString())
+  petitionbody.replaceText('{{preferredname}}', row[2].toString())
+  petitionbody.replaceText('{{subject}}', subject)
+  petitionbody.replaceText('{{possessive}}', possessive)
+  petitionbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  petitionbody.replaceText('{{streetaddress}}',row[5])
+  petitionbody.replaceText('{{city}}',row[6])
+  petitionbody.replaceText('{{st}}',row[7])
+  petitionbody.replaceText('{{zip}}',row[8])
+  petitionbody.replaceText('{{phone}}',row[9])
+
+  verificationbody.replaceText('{{capname}}', row[1].toString().toUpperCase())
+  verificationbody.replaceText('{{legalname}}', row[1].toString())
+  verificationbody.replaceText('{{preferredname}}', row[2].toString())
+  verificationbody.replaceText('{{subject}}', subject)
+  verificationbody.replaceText('{{possessive}}', possessive)
+  verificationbody.replaceText('{{county}}',row[4].toString().toUpperCase())
+  verificationbody.replaceText('{{streetaddress}}',row[5])
+  verificationbody.replaceText('{{city}}',row[6])
+  verificationbody.replaceText('{{st}}',row[7])
+  verificationbody.replaceText('{{zip}}',row[8])
+  verificationbody.replaceText('{{phone}}',row[9])
+  
+  };
+
+orderdoc.saveAndClose();
+const orderid = orderdoc.getId();
+var orderhyperlink = "https://docs.google.com/document/d/"+orderid+"/export?format=pdf";
+sheet.getRange(index + 1, 11).setValue('=HYPERLINK("'+orderhyperlink+'", "Download")');
+
+petitiondoc.saveAndClose();
+const petitionid = petitiondoc.getId();
+var petitionhyperlink = "https://docs.google.com/document/d/"+petitionid+"/export?format=pdf";
+sheet.getRange(index + 1, 12).setValue('=HYPERLINK("'+petitionhyperlink+'", "Download")');
+
+verificationdoc.saveAndClose();
+const verificationid = verificationdoc.getId();
+var verificationhyperlink = "https://docs.google.com/document/d/"+verificationid+"/export?format=pdf";
+sheet.getRange(index + 1, 13).setValue('=HYPERLINK("'+verificationhyperlink+'", "Download")');
+
+})
+
+}
